@@ -1,31 +1,5 @@
 #include "funciones.h"
 
-extern STATE estado;
-
-int get_event()
-{
-  EVENT evento;
-  char c = getchar();
-  switch(c){
-    case 'g':
-      evento = GO_COMMAND;
-      break;
-    case 's':
-      evento = STOP_COMMAND;
-      break;
-    case 't':
-      evento = TIMER_TIMEOUT;
-      break;
-    case 'q':
-      estado = EXIT;
-      break;
-    default:
-      evento = NO_EVENT;
-      break;
-  }
-
-  return evento;
-}
 
 void luz_roja()
 {
@@ -46,4 +20,46 @@ void luz_amarilla()
   printf("\033[0;33m");
   printf("\rAMARILLO >");
   printf("\033[0m");
+}
+
+void lightOn(tLight light){
+
+  switch(light){
+    case kRedLight:
+      luz_roja();
+      printf("rojo");
+      break;
+    case kGreenLight:
+      luz_verde();
+      printf("verde");
+      break;
+    case kYellowLight:
+      luz_amarilla();
+      printf("amarillo");
+      break;
+    default:
+    break;
+  }
+};
+
+
+
+void HandleEventGo(struct sStateTableEntry *stateTable, tLight *lightZero, tState *stateZero) {
+    switch (*lightZero) {
+        case kRedLight:
+            *stateZero = stateTable[*lightZero].goEvent;
+            lightOn(*lightZero);
+            break;
+        case kGreenLight:
+            *stateZero = stateTable[*lightZero].stopEvent;
+            lightOn(*lightZero);
+            break;
+        case kYellowLight:
+            *stateZero = stateTable[*lightZero].timeoutEvent;
+            lightOn(*lightZero);
+            break;
+        default:
+            // Manejar otro evento :3
+            break;
+    }
 }
